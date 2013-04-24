@@ -14,10 +14,17 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    digitreader.cpp
+    digitreader.cpp \
+    digitextracter.cpp \
+    formprinter.cpp \
+    dbconnector.cpp
 
 HEADERS  += mainwindow.h \
-    digitreader.h
+    digitreader.h \
+    digitextracter.h \
+    formprinter.h \
+    datastruct.h \
+    dbconnector.h
 
 FORMS    += mainwindow.ui
 

@@ -1,6 +1,7 @@
 #include "digitreader.h"
 #include <QString>
-
+#include <iostream>
+using namespace std;
 using namespace cv;
 
 DigitReader::DigitReader(QString path, int num_sample, int sample_size) {
@@ -31,13 +32,12 @@ bool DigitReader::getData() {
             Mat src_img = imread(file_name.arg(file_path).arg(i).arg(i).
                                  arg(j, padding, 10, QChar('0')).toStdString(), CV_LOAD_IMAGE_GRAYSCALE);
 
-            if (src_img.cols == 0 && src_img.rows) {
+            if (src_img.empty()) {
                 return false;
             }
-
             trainClasses->row(i * train_samples + j) = i;
-            DigitReader::preprocessing(&src_img, size, size).reshape(0, 1).convertTo(trainData->row(i * train_samples + j), CV_32FC1);
-
+            DigitReader::preprocessing(&src_img, size, size).reshape(0, 1).
+                    convertTo(trainData->row(i * train_samples + j), CV_32FC1);
         }
     }
 
@@ -53,6 +53,7 @@ float DigitReader::classify(Mat* imgSrc) {
     Mat samples;
     int accuracy = 0;
     DigitReader::preprocessing(imgSrc, size, size).reshape(0, 1).convertTo(samples, CV_32FC1);
+    //cout << samples << "\n";
     float result = knn.find_nearest(samples, K, 0, 0, &nearests, 0);
 
     for (int i = 0; i < K; i++) {
@@ -66,26 +67,25 @@ float DigitReader::classify(Mat* imgSrc) {
 
 int DigitReader::test() {
     int err = 0;
+    int total = 0;
     QString file_name("%1%2/%3%4.pbm");
 
     for (int i = 0; i < 10; i++) {
-        for (int j = 50; j < 100; i++) {
+        for (int j = 50; j < 100; j++) {
             Mat src_img = imread(file_name.arg(file_path).arg(i).arg(i).
                                  arg(j, 2, 10, QChar('0')).toStdString(), CV_LOAD_IMAGE_GRAYSCALE);
 
-            if (src_img.cols == 0 && src_img.rows == 0) {
-                return err;
-            }
-
-            Mat prs_img = DigitReader::preprocessing(&src_img, size, size);
-
-            if ((int)classify(&prs_img) != i) {
-                err++;
+            if (!src_img.empty()) {
+                Mat prs_img = DigitReader::preprocessing(&src_img, size, size);
+                total++;
+                if ((int)classify(&prs_img) != i) {
+                    err++;
+                }
             }
         }
     }
 
-    return err;
+    return (err/total)*100;
 }
 
 Mat DigitReader::preprocessing(Mat *imgSrc, int new_width, int new_height) {
@@ -145,7 +145,7 @@ Mat DigitReader::preprocessing(Mat *imgSrc, int new_width, int new_height) {
     int size = (roi.width > roi.height) ? roi.width : roi.height;
     Mat tmp(size, size, CV_8UC1, 255);
     bb.copyTo(tmp(Rect((size - roi.width) / 2, (size - roi.height) / 2, roi.width, roi.height)));
-    resize(tmp, result, result.size());
+    resize(tmp, result, result.size(), 0, 0, INTER_NEAREST);
 
     return result;
 }
