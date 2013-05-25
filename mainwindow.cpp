@@ -5,9 +5,13 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
-    //DigitReader r;
+    procWidget = new ProcessWidget();
 }
 
 MainWindow::~MainWindow() {
     delete ui;
+}
+
+void MainWindow::ShowProcWidget() {
+    setCentralWidget(procWidget);
 }

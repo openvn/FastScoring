@@ -15,18 +15,23 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     digitreader.cpp \
-    digitextracter.cpp \
     formprinter.cpp \
-    dbconnector.cpp
+    dbconnector.cpp \
+    pointdigitextracter.cpp \
+    digitextracter.cpp \
+    processwidget.cpp
 
 HEADERS  += mainwindow.h \
     digitreader.h \
     digitextracter.h \
     formprinter.h \
     datastruct.h \
-    dbconnector.h
+    dbconnector.h \
+    pointdigitextracter.h \
+    processwidget.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    processwidget.ui
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += opencv

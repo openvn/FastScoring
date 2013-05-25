@@ -9,17 +9,16 @@ using namespace std;
 class DigitReader {
 public:
     DigitReader(QString path, int num_sample, int sample_size);
-    float classify(Mat* imgSrc);
+    float classify(Mat& imgSrc);
     int test();
-    static Mat preprocessing(Mat* imgSrc, int new_width, int new_height);
-    static Mat toBW(Mat* imgSrc);
+    static Mat preprocessing(Mat& imgSrc, int new_width, int new_height);
 private:
     static const int K = 10;
     QString file_path;
     int train_samples;
     int size;
-    Mat* trainData;
-    Mat* trainClasses;
+    Mat trainData;
+    Mat trainClasses;
     KNearest knn;
     bool getData();
     void train();
